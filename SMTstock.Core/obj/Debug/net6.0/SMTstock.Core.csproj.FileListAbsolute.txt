@@ -1,0 +1,14 @@
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Core.deps.json
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Core.dll
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Core.pdb
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.csproj.AssemblyReference.cache
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.AssemblyInfoInputs.cache
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.AssemblyInfo.cs
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.csproj.CoreCompileInputs.cache
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.dll
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\refint\SMTstock.Core.dll
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.pdb
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\ref\SMTstock.Core.dll
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Core.runtimeconfig.json
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.genruntimeconfig.cache
