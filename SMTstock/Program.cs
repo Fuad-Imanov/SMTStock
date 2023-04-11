@@ -9,6 +9,7 @@ using SMTstock.DAL.Repository.Impelementations;
 using SMTstock.DAL.Repository.Interfaces;
 using SMTstock.Entities.Mapping;
 using SMTstock.Entities.Models;
+using SMTstock.Services.Configurations;
 using SMTstock.Services.Implementations;
 using SMTstock.Services.Interfaces;
 using System.Text.Json.Serialization;
@@ -35,7 +36,7 @@ builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IUnitOfWork<ApplicationDbContext>, UnitOfWork<ApplicationDbContext>>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-//builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 //builder.Services.AddScoped<ICategoryService,CategoryService>();
@@ -44,6 +45,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.AddGlobalErrorHandler();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

@@ -12,3 +12,6 @@ C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.
 C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\ref\SMTstock.Core.dll
 C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Core.runtimeconfig.json
 C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.genruntimeconfig.cache
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Entities.dll
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\bin\Debug\net6.0\SMTstock.Entities.pdb
+C:\Users\Dev\Source\Repos\SMTstock\SMTstock.Core\obj\Debug\net6.0\SMTstock.Core.csproj.CopyComplete

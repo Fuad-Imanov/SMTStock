@@ -2,14 +2,12 @@
 
 namespace SMTstock.Entities.Models
 {
-    public class Product
+    public class Product:BaseEntity
     {
         public Product()
         {
             OrdersProducts = new HashSet<OrderProduct>();
         }
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         public string ProductName { get; set; }

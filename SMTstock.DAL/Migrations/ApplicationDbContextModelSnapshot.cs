@@ -70,6 +70,9 @@ namespace SMTstock.DAL.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<double?>("OrderTotalPrice")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MerchantId");
@@ -93,6 +96,9 @@ namespace SMTstock.DAL.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<double?>("TotalPrice")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

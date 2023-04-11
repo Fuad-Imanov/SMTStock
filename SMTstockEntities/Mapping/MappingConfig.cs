@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using SMTstock.Entities.DTO;
+using SMTstock.Entities.DTO.OrderDto;
+using SMTstock.Entities.DTO.ProductDto;
 using SMTstock.Entities.Models;
 
 namespace SMTstock.Entities.Mapping
@@ -21,6 +22,9 @@ namespace SMTstock.Entities.Mapping
 
 
             CreateMap<ProductDTO, Product>().ReverseMap();
+
+           
+
 
         }
 

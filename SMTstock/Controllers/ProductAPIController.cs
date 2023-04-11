@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
-using SMTstock.DAL.Context;
-using SMTstock.Entities.DTO;
-using SMTstock.Entities.Models;
-using SMTstock.Services.Implementations;
+using SMTstock.Entities.DTO.ProductDto;
+using SMTstock.Entities.Utilities;
+using SMTstock.Entities.Utilities.Request;
+using SMTstock.Entities.Utilities.Sort.SortProduct;
 using SMTstock.Services.Interfaces;
+using System.Xml.Linq;
 
 namespace SMTstock.Controllers
 {
@@ -17,24 +16,27 @@ namespace SMTstock.Controllers
     {
 
         private readonly IProductService _productService;
-        //private readonly IUnitOfWork<ApplicationDbContext> _unitOfWork;
 
-        public ProductAPIController(IProductService productService /*,IUnitOfWork<ApplicationDbContext> unitOfWork*/)
+        public ProductAPIController(IProductService productService)
         {
             _productService = productService;
-            //_unitOfWork = unitOfWork;
         }
 
 
-        [HttpGet("GetProducts")]
-        [ProducesResponseType(StatusCodes.Status200OK)]//Experiment ucun yazilib,olmasa da olar
-        public async Task<IActionResult> GetAsync()
+        //[HttpGet("GetProducts")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]//Experiment ucun yazilib,olmasa da olar
+        //[HttpGet]
+        //public async Task<IActionResult> GetAsync([FromQuery(Name = "sortFields")][ModelBinder(typeof(SortFieldsModelBinder))] List<SortFieldForProduct> sortFields,int count,string searchtext)
+        //{
+        //    return Ok(sortFields);
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync([FromQuery]RequestForGetAllProduct request)
         {
-            var products = await _productService.GetAllProductsAsync();
-
-            return Ok(products);
+            var result = await _productService.GetAllProductsAsync(request);
+            return Ok(result);
         }
-
 
         [HttpGet("GetProductById/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,8 +64,8 @@ namespace SMTstock.Controllers
             if (ModelState.IsValid)
             {
 
-                ProductDTO createdProduct  = await _productService.AddProductAsync(addProductDTO);
-                return CreatedAtAction(nameof(GetByIdAsync), new { id = createdProduct.Id }, createdProduct);
+                var result = await _productService.AddProductAsync(addProductDTO);
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Data.Id }, result);
             }
 
             return BadRequest(ModelState);
@@ -105,9 +107,9 @@ namespace SMTstock.Controllers
         [HttpDelete("DeleteProduct/{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _productService.RemoveProduct(id);
+            var result = await _productService.RemoveProduct(id);
 
-            return NoContent();
+            return Ok(result);
         }
 
     }

@@ -3,6 +3,7 @@ using SMTstock.Core.DataAccess;
 using SMTstock.Core.DataAccess.GenericRepository.Impelementations;
 using SMTstock.Core.DataAccess.GenericRepository.Interfaces;
 using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
+using SMTstock.Entities.Models;
 
 namespace SMTstock.Core.DataAccess.UnitOfWork.Implementations
 {
@@ -16,7 +17,7 @@ namespace SMTstock.Core.DataAccess.UnitOfWork.Implementations
             _context = new TContext();
         }
 
-        public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : BaseEntity
         {
             if (_repositories.TryGetValue(typeof(TEntity), out object repository))
             {

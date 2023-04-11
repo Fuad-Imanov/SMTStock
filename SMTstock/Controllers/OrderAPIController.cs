@@ -1,103 +1,69 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
-//using SMTstock.DAL.Context;
-//using SMTstock.Entities.Models;
-//using SMTstock.Services.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
+using SMTstock.DAL.Context;
+using SMTstock.Entities.DTO.OrderDto;
+using SMTstock.Entities.Models;
+using SMTstock.Services.Interfaces;
 
-//namespace SMTstock.Controllers
-//{
-//    //[Route("api/[controller]")]
-//    [Route("api/OrderAPI")]
-//    [ApiController]
-//    public class OrderAPIController : ControllerBase
-//    {
-//        private readonly IOrderService _orderService;
-//        private readonly IUnitOfWork<ApplicationDbContext> _unitOfWork;
+namespace SMTstock.Controllers
+{
+    //[Route("api/[controller]")]
+    [Route("api/OrderAPI")]
+    [ApiController]
+    public class OrderAPIController : ControllerBase
+    {
+        private readonly IOrderService _orderService;
+        private readonly IUnitOfWork<ApplicationDbContext> _unitOfWork;
 
-//        public OrderAPIController(IOrderService orderService,IUnitOfWork<ApplicationDbContext> unitOfWork)
-//        {
-//            _orderService = orderService;
-//            _unitOfWork = unitOfWork;
-//        }
+        public OrderAPIController(IOrderService orderService, IUnitOfWork<ApplicationDbContext> unitOfWork)
+        {
+            _orderService = orderService;
+            _unitOfWork = unitOfWork;
+        }
 
-//        [HttpGet("GetOrders")]
-//        public IActionResult GetOrders()
-//        {
-//            var orders = _orderService.GetOrders();
+        [HttpGet("GetOrders")]
+        public IActionResult GetOrders()
+        {
+            var result = _orderService.GetAllOrdersAsync();
+            return Ok(result);
+        }
 
-//            return Ok(orders);
-//        }
+        [HttpGet("GetOrderById/{id:int}")]
+        public async Task<IActionResult> GetOrderByIdAsync(int id)
+        {
 
-//        [HttpGet("GetOrderById/{id:int}")]
-//        public async Task<IActionResult> GetOrderByIdAsync(int id)
-//        {
-//            var order = await _orderService.GetOrderByIdAsync(id);
+            return Ok();
+        }
+        [HttpPost("AddOrder")]
+        public async Task<IActionResult> AddOrderAsync(OrderCreateDto orderDto)
+        {
+            if (ModelState.IsValid)
+            {
+                await _orderService.AddOrderAsync(orderDto);
+                //_unitOfWork.SaveChanges();
 
-//            if (order == null)
-//            {
-//                return NotFound();
-//            }
+                return Ok();
+            }
 
-//            return Ok(order);
-//        }
-//        [HttpPost("AddOrder")]
-//        public async Task<IActionResult> AddOrderAsync(Order order)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                await _orderService.AddOrderAsync(order);
-//                _unitOfWork.SaveChanges();
+            return BadRequest(ModelState);
+        }
 
-//                return CreatedAtAction(nameof(GetOrderByIdAsync), new { id = order.Id }, order);
-//            }
+        [HttpPut("UpdateOrder/{id:int}")]
+        public async Task<IActionResult> UpdateOrderAsync(int id)
+        {
+           
 
-//            return BadRequest(ModelState);
-//        }
+            return BadRequest();
+        }
 
-//        [HttpPut("UpdateOrder/{id:int}")]
-//        public async Task<IActionResult> UpdateOrderAsync(int id)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                try
-//                {
-//                    var order = await _orderService.GetOrderByIdAsync(id);
-//                    _orderService.UpdateOrder(order);
-//                    _unitOfWork.SaveAsync();
-//                }
-//                catch (DbUpdateConcurrencyException)
-//                {
-//                    if (_orderService.GetOrderByIdAsync(id) == null)
-//                    {
-//                        return NotFound();
-//                    }
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            _orderService.RemoveOrder(id);
+            return NoContent();
+        }
 
-//                    throw;
-//                }
-
-//                return NoContent();
-//            }
-
-//            return BadRequest(ModelState);
-//        }
-
-//        [HttpDelete("{id:int}")]
-//        public async Task<IActionResult> DeleteAsync(int id)
-//        {
-//            var order = await _orderService.GetOrderByIdAsync(id);
-
-//            if (order == null)
-//            {
-//                return NotFound();
-//            }
-
-//            _orderService.DeleteOrder(order);
-//            _unitOfWork.SaveAsync();
-
-//            return NoContent();
-//        }
-
-//    }
-//}
+    }
+}

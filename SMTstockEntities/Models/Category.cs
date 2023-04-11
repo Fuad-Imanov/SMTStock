@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace SMTstock.Entities.Models
 {
-    public class Category
+    public class Category:BaseEntity
     {
         public Category()
         {
             Products = new HashSet<Product>();
         }
-        public int Id { get; set; }
         public string CategoryName { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }

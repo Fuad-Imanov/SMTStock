@@ -16,44 +16,6 @@ using System.Threading.Tasks;
 
 namespace SMTstock.DAL.Repository.Impelementations
 {
-    //public class OrderRepository : GenericRepository<Order>, IOrderRepository
-    //{
-       
-    //}
-    //public class OrderRepository : IRepository<Order>, IOrderRepository
-    //{
-    //    public OrderRepository(IUnitOfWork<ApplicationDbContext> unitOfWork)
-           
-    //    {
-    //    }
-    //    public OrderRepository(ApplicationDbContext context)
-    //    {
-    //    }
-
-    //    public void Add(Order entity)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public void Delete(Order entity)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public IEnumerable<Order> GetAll()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public Order GetById(int id)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public void Update(Order entity)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
     
+   
 }
