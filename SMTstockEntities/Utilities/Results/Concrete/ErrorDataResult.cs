@@ -1,6 +1,7 @@
 ﻿
 using SMTstock.Entities.Utilities.Filter;
 using SMTstock.Entities.Utilities.Pagination;
+using SMTstock.Entities.Utilities.Sort;
 using SMTstock.Entities.Utilities.Sort.SortProduct;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,10 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
 
         public ErrorDataResult
             (
-                T data, FilterFieldForProduct? filterProduct,
-                string? searchString, SortFieldForProduct? sortProduct,
+                T data, IFilterFields? filter,
+                string? searchString, ISortField? sort,
                  PagedList pageList, params string[] message
-            ) : base(data, false, filterProduct, searchString, sortProduct, pageList, message)
+            ) : base(data, false, filter, searchString, sort, pageList, message)
         {
 
         }

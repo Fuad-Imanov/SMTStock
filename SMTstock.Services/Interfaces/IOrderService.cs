@@ -15,8 +15,7 @@ namespace SMTstock.Services.Interfaces
     public interface IOrderService
     {
         Task<IDataResult<Order>> GetOrderByIdAsync(int id);
-        //Task<IDataResult<IEnumerable<Order>>> GetAllOrdersAsync(Order order);
-        List<OrderGetDto> GetAllOrdersAsync();
+        Task<IDataResult<IEnumerable<OrderGetDto>>> GetAllOrdersAsync(RequestForGetAllOrder request);
         Task<IDataResult<Order>> AddOrderAsync(OrderCreateDto orderDto);
         Task<IResult> UpdateOrder(int id, Order order);
         Task<IResult> RemoveOrder(int id);

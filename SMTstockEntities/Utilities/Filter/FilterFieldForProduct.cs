@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SMTstock.Entities.Utilities.Filter
+﻿namespace SMTstock.Entities.Utilities.Filter
 {
-    public class FilterFieldForProduct
+    public class FilterFieldForProduct:IFilterFields
     {
         public int[] CategoryId { get; set; }
 

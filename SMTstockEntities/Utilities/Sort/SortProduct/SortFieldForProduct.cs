@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SMTstock.Entities.Utilities.Sort.SortProduct
 {
-    public class SortFieldForProduct
+    public class SortFieldForProduct:ISortField
     {
         public bool NameAsc { get; set; }
         public bool NameDesc { get; set; }

@@ -2,6 +2,7 @@
 using SMTstock.Entities.Utilities.Filter;
 using SMTstock.Entities.Utilities.Pagination;
 using SMTstock.Entities.Utilities.Results.Abstract;
+using SMTstock.Entities.Utilities.Sort;
 using SMTstock.Entities.Utilities.Sort.SortProduct;
 using System;
 using System.Collections.Generic;
@@ -24,13 +25,13 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
         {
             Success = success;
         }
-        public Result(bool success,FilterFieldForProduct? filterProduct, string? searchString, SortFieldForProduct? sortProduct, PagedList pageList, params string[] message) :this(success,message)
+        public Result(bool success, IFilterFields? filter, string? searchString, ISortField? sort, PagedList pageList, params string[] message) :this(success,message)
             
         {
             Success = success;
-            FilterProduct = filterProduct;
+            Filter = filter;
             SearchString = searchString;
-            SortProduct = sortProduct;
+            Sort = sort;
             PageList = pageList;
             Message= message;
         }
@@ -42,9 +43,9 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
 
 
 
-        public SortFieldForProduct? SortProduct { get;  }
-        public FilterFieldForProduct? FilterProduct { get;  }
-        public string? SearchString { get;   }
-        public PagedList PageList { get;} 
+        public ISortField? Sort { get; }
+        public IFilterFields?  Filter { get; } 
+        public string? SearchString { get; }
+        public PagedList PageList { get; } 
     }
 }

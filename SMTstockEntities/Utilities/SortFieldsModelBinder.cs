@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SMTstock.Entities.Utilities.Sort;
 using SMTstock.Entities.Utilities.Sort.SortProduct;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace SMTstock.Entities.Utilities
             var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
             if (valueProviderResult == ValueProviderResult.None)
             {
-                bindingContext.Result = ModelBindingResult.Success(new List<SortFieldForProduct>());
+                bindingContext.Result = ModelBindingResult.Success(new List<ISortField>());
                 return;
             }
 
@@ -34,14 +35,14 @@ namespace SMTstock.Entities.Utilities
 
             try
             {
-                var result = new List<SortFieldForProduct>();
+                var result = new List<ISortField>();
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 };
                 foreach(var json in valueProviderResult.Values)
                 {
-                    var jsonResult = JsonSerializer.Deserialize<SortFieldForProduct>(json, options);
+                    var jsonResult = JsonSerializer.Deserialize<ISortField>(json, options);
                     result.Add(jsonResult);
                 }
                 

@@ -5,6 +5,7 @@ using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
 using SMTstock.DAL.Context;
 using SMTstock.Entities.DTO.OrderDto;
 using SMTstock.Entities.Models;
+using SMTstock.Entities.Utilities.Request;
 using SMTstock.Services.Interfaces;
 
 namespace SMTstock.Controllers
@@ -24,9 +25,9 @@ namespace SMTstock.Controllers
         }
 
         [HttpGet("GetOrders")]
-        public IActionResult GetOrders()
+        public async Task<IActionResult> GetOrdersAsync([FromQuery]RequestForGetAllOrder request)
         {
-            var result = _orderService.GetAllOrdersAsync();
+            var result = await _orderService.GetAllOrdersAsync(request);
             return Ok(result);
         }
 
@@ -53,7 +54,7 @@ namespace SMTstock.Controllers
         [HttpPut("UpdateOrder/{id:int}")]
         public async Task<IActionResult> UpdateOrderAsync(int id)
         {
-           
+
 
             return BadRequest();
         }
