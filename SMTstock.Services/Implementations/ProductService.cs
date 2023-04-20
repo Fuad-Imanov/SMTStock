@@ -32,23 +32,12 @@ namespace SMTstock.Services.Implementations
         }
 
 
-
-        public async Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id)
-        {
-            //var productRepository = _unitOfWork.GetRepository<Product>();
-            var product = await _productRepository.GetByIdAsync(id, false);
-            var productDto = _mapper.Map<ProductDTO>(product);
-            return (productDto is not null)
-                 ? new SuccessDataResult<ProductDTO>(productDto, "Product succesfully get!")
-                : new ErrorDataResult<ProductDTO>("Product not created");
-        }
-
         public async Task<IDataResult<IEnumerable<ProductDTO>>> GetAllProductsAsync(RequestForGetAllProduct request)
         {
             IQueryable<Product> products = _productRepository.GetAll().Include(p => p.Category);
 
             //filter
-           
+
             if (request.filterProduct is not null && request.filterProduct.CategoryId.Length != 0)
             {
                 products = products.Where(p => request.filterProduct.CategoryId.Contains(p.CategoryId));
@@ -97,21 +86,40 @@ namespace SMTstock.Services.Implementations
             //Create and return Response
             var pageList = new PagedList(totalItem, request.page);
             return (productsDto is not null && productsDto.Count != 0)
-                ? new SuccessDataResult<IEnumerable<ProductDTO>>(productsDto,request.filterProduct, request.searchString, request.sortProduct, pageList, "The product was successfully delivered.")
+                ? new SuccessDataResult<IEnumerable<ProductDTO>>(productsDto, request.filterProduct, request.searchString, request.sortProduct, pageList, "The product was successfully delivered.")
                 : new ErrorDataResult<IEnumerable<ProductDTO>>(productsDto, request.filterProduct, request.searchString, request.sortProduct, pageList, "Product not found.");
         }
 
+        public async Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id)
+        {
+            //var productRepository = _unitOfWork.GetRepository<Product>();
+            var product = await _productRepository.GetByIdAsync(id, false);
+            var productDto = _mapper.Map<ProductDTO>(product);
+            return (productDto is not null)
+                 ? new SuccessDataResult<ProductDTO>(productDto, "Product succesfully get!")
+                : new ErrorDataResult<ProductDTO>("Product not created");
+        }     
 
         public async Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDto addProductDto)
         {
             var product = _mapper.Map<Product>(addProductDto);
-            await _productRepository.AddAsync(product);
-            _unitOfWork.SaveChanges();
-            var createdProductDto = _mapper.Map<ProductDTO>(product);
-            return (createdProductDto is not null)
-                ? new SuccessDataResult<ProductDTO>(createdProductDto, "Product succesfully created!")
-                : new ErrorDataResult<ProductDTO>("Product not created");
+            var productAdd = await _productRepository.AddAsync(product);
+            if (!productAdd)
+            {
+                return new ErrorDataResult<ProductDTO>("Error when add product");
+            }
+            var save = _unitOfWork.SaveChanges();
+            if (save!=0)
+            {
+                var createdProductDto = _mapper.Map<ProductDTO>(product);
+                return new SuccessDataResult<ProductDTO>(createdProductDto, "Product succesfully created!");
+            }
+            else
+            {
+                return new ErrorDataResult<ProductDTO>("Product not created");
+            }
         }
+            
 
         public async Task<IResult> UpdateProduct(int id, ProductDTO productDto)
         {
@@ -124,9 +132,14 @@ namespace SMTstock.Services.Implementations
             product = _mapper.Map<Product>(productDto);
             if (await _productRepository.Update(product))
             {
-                _unitOfWork.SaveChanges();
-                return new SuccessResult("Product succesfully update");
+                var save = _unitOfWork.SaveChanges();
+                if(save !=0)
+                {
+                    return new SuccessResult("Product succesfully update");
+                }
+                return new ErrorResult("Product do not update");
             }
+                
             return new ErrorResult("Product do not update");
         }
         public async Task<IResult> RemoveProduct(int id)
@@ -139,7 +152,7 @@ namespace SMTstock.Services.Implementations
             }
             if (await _productRepository.Remove(product))
             {
-                _unitOfWork.SaveChanges();
+               var save =  _unitOfWork.SaveChanges();
                 return new SuccessResult("Product succesfully deleted");
             }
             return new ErrorResult("Product do not deleted");

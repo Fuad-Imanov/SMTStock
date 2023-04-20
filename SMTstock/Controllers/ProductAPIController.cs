@@ -74,7 +74,7 @@ namespace SMTstock.Controllers
         }
 
         [HttpPut("UpdateProduct/{id:int}")]
-        public async Task<IActionResult> UpdateProductAsync(int id, [FromBody] ProductDTO productDTO)
+        public async Task<IActionResult> UpdateProductAsync(int id, [FromBody]ProductDTO productDTO)
         {
             if (productDTO == null || id != productDTO.Id)
             {

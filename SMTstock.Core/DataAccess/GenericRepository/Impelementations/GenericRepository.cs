@@ -47,10 +47,10 @@ namespace SMTstock.Core.DataAccess.GenericRepository.Impelementations
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
-        public async Task<TEntity> AddAsync(TEntity entity)
+        public async Task<bool> AddAsync(TEntity entity)
         {
             var entry = await _dbSet.AddAsync(entity);
-            return entity;
+            return entry.State == EntityState.Added;
         }
 
         public async Task AddRangeAsync(IEnumerable<TEntity> entities)

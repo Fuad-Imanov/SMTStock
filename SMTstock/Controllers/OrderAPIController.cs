@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
 using SMTstock.DAL.Context;
 using SMTstock.Entities.DTO.OrderDto;
+using SMTstock.Entities.DTO.ProductDto;
 using SMTstock.Entities.Models;
 using SMTstock.Entities.Utilities.Request;
+using SMTstock.Services.Implementations;
 using SMTstock.Services.Interfaces;
 
 namespace SMTstock.Controllers
@@ -34,36 +36,60 @@ namespace SMTstock.Controllers
         [HttpGet("GetOrderById/{id:int}")]
         public async Task<IActionResult> GetOrderByIdAsync(int id)
         {
+            var order  = await _orderService.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
 
-            return Ok();
+            return Ok(order);
         }
         [HttpPost("AddOrder")]
         public async Task<IActionResult> AddOrderAsync(OrderCreateDto orderDto)
         {
             if (ModelState.IsValid)
             {
-                await _orderService.AddOrderAsync(orderDto);
-                //_unitOfWork.SaveChanges();
-
-                return Ok();
+                var result = await _orderService.AddOrderAsync(orderDto);
+                return Ok(result);
             }
 
             return BadRequest(ModelState);
         }
 
         [HttpPut("UpdateOrder/{id:int}")]
-        public async Task<IActionResult> UpdateOrderAsync(int id)
+        public async Task<IActionResult> UpdateOrderAsync(int id, [FromBody]OrderUpdateDto orderUpdateDto)
         {
+            if (orderUpdateDto == null || id != orderUpdateDto.Id)
+            {
+                return BadRequest();
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _orderService.UpdateOrder(id, orderUpdateDto);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (_orderService.GetOrderByIdAsync(id) == null)
+                    {
+                        return NotFound();
+                    }
 
+                    throw;
+                }
 
-            return BadRequest();
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            _orderService.RemoveOrder(id);
-            return NoContent();
+            var result = await _orderService.RemoveOrder(id);
+            return Ok(result);
         }
 
     }

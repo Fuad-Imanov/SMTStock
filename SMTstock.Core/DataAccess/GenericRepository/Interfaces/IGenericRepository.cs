@@ -17,7 +17,7 @@ namespace SMTstock.Core.DataAccess.GenericRepository.Interfaces
         //Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
-        Task<TEntity> AddAsync(TEntity entity);
+        Task<bool> AddAsync(TEntity entity);
         Task AddRangeAsync(IEnumerable<TEntity> entities);
         Task<bool> Update(TEntity entity);
         Task<bool> Remove(TEntity entity);

@@ -13,6 +13,6 @@ namespace SMTstock.DAL.Repository.Interfaces
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
-
+        Task<Order> GetOrderByIdAsync(int id,bool tracking);
     }
 }

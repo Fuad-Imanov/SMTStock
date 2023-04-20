@@ -7,8 +7,9 @@ namespace SMTstock.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id);
+
         Task<IDataResult<IEnumerable<ProductDTO>>> GetAllProductsAsync(RequestForGetAllProduct request);
+        Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id);
         Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDto addProductDto);
         Task<IResult> UpdateProduct(int id, ProductDTO productDto);
         Task<IResult> RemoveProduct(int id);

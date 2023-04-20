@@ -14,10 +14,11 @@ namespace SMTstock.Services.Interfaces
 {
     public interface IOrderService
     {
-        Task<IDataResult<Order>> GetOrderByIdAsync(int id);
+
         Task<IDataResult<IEnumerable<OrderGetDto>>> GetAllOrdersAsync(RequestForGetAllOrder request);
-        Task<IDataResult<Order>> AddOrderAsync(OrderCreateDto orderDto);
-        Task<IResult> UpdateOrder(int id, Order order);
+        Task<IDataResult<OrderGetDto>> GetOrderByIdAsync(int id);
+        Task<IDataResult<OrderGetDto>> AddOrderAsync(OrderCreateDto orderDto);
+        Task<IResult> UpdateOrder(int id, OrderUpdateDto orderUpdateDto);
         Task<IResult> RemoveOrder(int id);
     }
 }

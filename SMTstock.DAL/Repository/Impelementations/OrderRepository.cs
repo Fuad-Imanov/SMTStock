@@ -1,21 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using SMTstock.Core.DataAccess;
 using SMTstock.Core.DataAccess.GenericRepository.Impelementations;
-using SMTstock.Core.DataAccess.GenericRepository.Interfaces;
-using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
 using SMTstock.DAL.Context;
 using SMTstock.DAL.Repository.Interfaces;
 using SMTstock.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SMTstock.DAL.Repository.Impelementations
 {
-    
-   
+
+    public class OrderRepository : GenericRepository<Order>, IOrderRepository
+    {
+        private readonly ApplicationDbContext _context;
+        public OrderRepository(ApplicationDbContext context) : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task<Order> GetOrderByIdAsync(int id,bool tracking)
+        {
+            if(tracking)
+            {
+                return await _context.Set<Order>().Include(o => o.OrdersProducts).ThenInclude(op => op.Product)
+                .SingleOrDefaultAsync(o => o.Id == id);
+            }
+            return  await _context.Set<Order>().AsNoTracking().Include(o => o.OrdersProducts).ThenInclude(op => op.Product)
+                .SingleOrDefaultAsync(o => o.Id == id);
+        }
+    }
 }

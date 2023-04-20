@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using SMTstock.Entities.DTO.OrderDto;
+using SMTstock.Entities.DTO.OrderProduct;
 using SMTstock.Entities.DTO.ProductDto;
 using SMTstock.Entities.Models;
 
@@ -42,6 +43,12 @@ namespace SMTstock.Entities.Mapping
                     Balance = src.Product.Balance,
                     CategoryId = src.Product.CategoryId,
                 }));
+
+            //map Order to OrderUpdateDto
+            CreateMap<Order, OrderUpdateDto>();
+            CreateMap<OrderUpdateDto, Order>()
+            .ForMember(dest => dest.OrdersProducts, opt => opt.MapFrom(src => src.OrdersProducts));
+            CreateMap<OrderProductUpdateDto, OrderProduct>().ReverseMap();
 
 
         }

@@ -31,5 +31,7 @@ namespace SMTstock.DAL.Context
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
+
+        
     }
 }
