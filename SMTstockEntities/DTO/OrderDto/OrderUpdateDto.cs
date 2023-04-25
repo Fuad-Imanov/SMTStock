@@ -11,8 +11,8 @@ namespace SMTstock.Entities.DTO.OrderDto
     {
         public int Id { get; set; }
         public int MerchantId { get; set; }
-        public double? OrderTotalPrice { get; set; }
-        public DateTime OrderDate { get; set; }
+        //public double? OrderTotalPrice { get; set; }
+        //public DateTime OrderDate { get; set; }
         public ICollection<OrderProductUpdateDto> OrdersProducts { get; set; }
     }
 }

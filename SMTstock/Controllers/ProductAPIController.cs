@@ -84,7 +84,8 @@ namespace SMTstock.Controllers
             {
                 try
                 {
-                    await _productService.UpdateProduct(id, productDTO);
+                    var result = await _productService.UpdateProduct(id, productDTO);
+                    return Ok(result);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

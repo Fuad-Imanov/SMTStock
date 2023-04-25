@@ -8,9 +8,9 @@ namespace SMTstock.Entities.DTO.OrderProduct
 {
     public class OrderProductUpdateDto
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public int ProductId { get; set; }
-        public double? TotalPrice { get; set; }
+        //public double? TotalPrice { get; set; }
         public int Quantity { get; set; }
     }
 }

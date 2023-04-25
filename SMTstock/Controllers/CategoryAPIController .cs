@@ -1,112 +1,107 @@
-﻿//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using SMTstock.Core.DataAccess.UnitOfWork.Interfaces;
-//using SMTstock.DAL.Context;
-//using SMTstock.Entities.Models;
-//using SMTstock.Services.Implementations;
-//using SMTstock.Services.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SMTstock.Entities.DTO.CategoryDto;
+using SMTstock.Services.Interfaces;
 
-//namespace SMTstock.Controllers
-//{
-//    //[Route("api/[controller]")]
-//    [Route("api/CategoryAPI")]
-//    [ApiController]
-//    public class CategoryAPIController : ControllerBase
-//    {
+namespace SMTstock.Controllers
+{
+    //[Route("api/[controller]")]
+    [Route("api/CategoryAPI")]
+    [ApiController]
+    public class CategoryAPIController : ControllerBase
+    {
+        private readonly ICategoryService _categoryService;
 
-//        private readonly ICategoryService _categoryService;
-//        private readonly IUnitOfWork<ApplicationDbContext> _unitOfWork;
+        public CategoryAPIController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
+        }
 
-//        public CategoryAPIController(ICategoryService categoryService, IUnitOfWork<ApplicationDbContext> unitOfWork)
-//        {
-//            _categoryService = categoryService;
-//            _unitOfWork = unitOfWork;
-//        }
 
-//        [HttpGet("GetCategories")]
-//        public IActionResult Get()
-//        {
-//            var categories = _categoryService.GetCategories();
 
-//            return Ok(categories);
-//        }
+        [HttpGet]
+        public async Task<IActionResult> GetAsync()
+        {
+            var result = await _categoryService.GetAllCategoriesAsync();
+            return Ok(result);
+        }
 
-//        [HttpGet("GetCategoryById/{id}")]
-//        public async Task<IActionResult> GetAsync(int id)
-//        {
-//            var category = await _categoryService.GetCategoryByIdAsync(id);
+        [HttpGet("GetCategoryById/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
 
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
+            return Ok(category);
+        }
 
-//            return Ok(category);
-//        }
-//        [HttpPost("AddCategory")]
-//        public async Task<IActionResult> AddCategory(Category category)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                await _categoryService.AddCategoryAsync(category);
-//                _unitOfWork.SaveAsync();
 
-//                return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
-//            }
+        [HttpPost("AddCategory")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> AddcategoryAsync(AddCategoryDTO addcategoryDTO)
+        {
 
-//            return BadRequest(ModelState);
-//        }
 
-//        [HttpPut("UpdateCategory/{id}")]
-//        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromBody] Category category)
-//        {
-//            if (category == null || id != category.Id)
-//            {
-//                return BadRequest();
-//            }
-//            if (ModelState.IsValid)
-//            {
-//                try
-//                {
-//                    category = await _categoryService.GetCategoryByIdAsync(id);
-//                    _categoryService.UpdateCategory(category);
-//                    _unitOfWork.SaveAsync();
-//                }
-//                catch (DbUpdateConcurrencyException)
-//                {
-//                    if (_categoryService.GetCategoryByIdAsync(id) == null)
-//                    {
-//                        return NotFound();
-//                    }
+            if (ModelState.IsValid)
+            {
 
-//                    throw;
-//                }
+                var result = await _categoryService.AddCategoryAsync(addcategoryDTO);
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Data.Id }, result);
+            }
 
-//                return NoContent();
-//            }
+            return BadRequest(ModelState);
 
-//            return BadRequest(ModelState);
-//        }
 
-//        [HttpDelete("DeleteCategory/{id}")]
-//        [ProducesResponseType(204)]
-//        [ProducesResponseType(404)]
-//        public async Task<IActionResult> DeleteAsync(int id)
-//        {
-//            var category = await _categoryService.GetCategoryByIdAsync(id);
+        }
 
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
+        [HttpPut("Updatecategory/{id:int}")]
+        public async Task<IActionResult> UpdatecategoryAsync(int id, [FromBody] CategoryDTO categoryDTO)
+        {
+            if (categoryDTO == null || id != categoryDTO.Id)
+            {
+                return BadRequest();
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var result = await _categoryService.UpdateCategory(id, categoryDTO);
+                    return Ok(result);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (_categoryService.GetCategoryByIdAsync(id) == null)
+                    {
+                        return NotFound();
+                    }
 
-//            _categoryService.DeleteCategory(category);
-//            _unitOfWork.SaveAsync();
+                    throw;
+                }
 
-//            return NoContent();
-//        }
+                return NoContent();
+            }
 
-//    }
+            return BadRequest(ModelState);
+        }
 
-//}
+
+
+        [HttpDelete("DeleteCategory/{id:int}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var result = await _categoryService.RemoveCategory(id);
+
+            return Ok(result);
+        }
+
+    }
+}
+
+

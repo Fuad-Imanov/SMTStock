@@ -176,7 +176,7 @@ namespace SMTstock.Services.Implementations
             var orderDto = _mapper.Map<OrderGetDto>(order);
             return (orderDto is not null)
                  ? new SuccessDataResult<OrderGetDto>(orderDto, "Order succesfully get!")
-                : new ErrorDataResult<OrderGetDto>("Order not created");
+                : new ErrorDataResult<OrderGetDto>("Order not found");
         }
         public async Task<IDataResult<OrderGetDto>> AddOrderAsync(OrderCreateDto orderCreateDto)
         {
@@ -216,7 +216,7 @@ namespace SMTstock.Services.Implementations
                 product.Balance -= orderProductCreateDto.Quantity;
 
                 //add info to orderproduct 
-                // orderProduct.Product = product;
+                //orderProduct.Product = product;
                 orderProduct.TotalPrice = orderProductCreateDto.Quantity * product.Price;
                 order.OrderTotalPrice = order.OrderTotalPrice + (orderProductCreateDto.Quantity * product.Price);
                 var orderProductAdd = await _orderProductRepository.AddAsync(orderProduct);
@@ -268,83 +268,131 @@ namespace SMTstock.Services.Implementations
                     product.Balance += orderProduct.Quantity;
                 }
             }
-            //Orderin icindeki yeni sifarish olunan productlarin sayini bazadan azaldiriq
-            foreach (var orderProduct in orderUpdateDto.OrdersProducts)
+            
+            //yeni order yaradiriq
+            var orderForDb = new Order
             {
-                var product = await _productRepository.GetByIdAsync(orderProduct.ProductId, true);
-                var orderProductFromDb = await _orderProductRepository.GetByIdAsync(orderProduct.Id, true);
-                if (product is null)
-                {
-                    return new ErrorResult("Product not found");
-                }
-                if (product.Balance < orderProduct.Quantity)
-                {
-                    return new ErrorResult($"Not enough units of product {product.ProductName}.");
-                }
-                product.Balance -= orderProduct.Quantity;
-                orderProduct.TotalPrice = orderProduct.Quantity * product.Price;
-                orderUpdateDto.OrderTotalPrice += (orderProduct.Quantity * product.Price);
-                //Eger orderProductFromDb null-dursa demek order-e  yeni product elave olunub eks halda kohne product yenilenir
-                if (orderProductFromDb != null)
-                {
-                    // Update the properties of the OrderProduct entity
-                    orderProductFromDb.ProductId = orderProduct.ProductId;
-                    orderProductFromDb.TotalPrice = orderProduct.TotalPrice;
-                    orderProductFromDb.Quantity = orderProduct.Quantity;
-                }
-                else
-                {
-                    // If the OrderProduct entity is not found, add it as a new entity
-                    orderProductFromDb = _mapper.Map<OrderProduct>(orderProduct);
-                    orderUpdateDto.OrdersProducts.Add(orderProduct);
-                }
-                //var op = order.OrdersProducts.FirstOrDefault(op => op.Id == orderProduct.Id);
-                //if (op is not null)
-                //{
-                //    //product.Balance += op.Quantity;
-                //    if (product.Balance < orderProduct.Quantity)
-                //    {
-                //        return new ErrorResult($"Not enough units of product {product.ProductName}.");
-                //    }
-                //    product.Balance -= orderProduct.Quantity;
-                //    orderProduct.TotalPrice = orderProduct.Quantity * product.Price;
-                //    orderUpdateDto.OrderTotalPrice += (orderProduct.Quantity * product.Price);
-                //}
-                //else
-                //{
-                //    if (product.Balance < orderProduct.Quantity)
-                //    {
-                //        return new ErrorResult($"Not enough units of product {product.ProductName}.");
-                //    }
-                //    product.Balance -= orderProduct.Quantity;
-                //    orderProduct.TotalPrice = orderProduct.Quantity * product.Price;
-                //    orderUpdateDto.OrderTotalPrice += (orderProduct.Quantity * product.Price);
-                //}
-            }
-            order = _mapper.Map<Order>(orderUpdateDto);
-            foreach(var orderProduct in order.OrdersProducts)
+                MerchantId = orderUpdateDto.MerchantId,
+                OrderTotalPrice = 0,
+                OrderDate = DateTime.Now,
+                OrdersProducts = new List<OrderProduct>()
+            };
+
+            foreach (var orderProductCreateDto in orderUpdateDto.OrdersProducts)
             {
+                //create new orderproduct
+                var orderProduct = new OrderProduct
+                {
+                    ProductId = orderProductCreateDto.ProductId,
+                    Quantity = orderProductCreateDto.Quantity
+
+                };
+                //get product from db and check Balance
+                var product = await _productRepository.GetByIdAsync(orderProductCreateDto.ProductId, true);
+                if (product == null)
+                {
+                    return new ErrorDataResult<OrderGetDto>("Product not found");
+                }
+                if (product.Balance < orderProductCreateDto.Quantity)
+                {
+                    return new ErrorDataResult<OrderGetDto>($"Not enough units of product {product.ProductName}.");
+                }
+                product.Balance -= orderProductCreateDto.Quantity;
+
+                //add info to orderproduct 
+                //orderProduct.Product = product;
+                orderProduct.TotalPrice = orderProductCreateDto.Quantity * product.Price;
+                orderForDb.OrderTotalPrice = orderForDb.OrderTotalPrice + (orderProductCreateDto.Quantity * product.Price);
                 var orderProductAdd = await _orderProductRepository.AddAsync(orderProduct);
                 if (!orderProductAdd)
                 {
                     return new ErrorDataResult<OrderGetDto>("Error when added OrderProduct");
                 }
+                orderForDb.OrdersProducts.Add(orderProduct);
+
             }
-            if (await _orderRepository.Update(order))
+            var orderAdd = await _orderRepository.AddAsync(orderForDb);
+            if (!orderAdd)
             {
-                var save = _unitOfWork.SaveChanges();
-                if (save == 1)
-                {
-                    return new SuccessResult("Order succesfully update");
-                }
-                else
-                {
-                    return new ErrorResult("Order update failed");
-                }
-                }
-            return new ErrorResult("Order update failed");
-            throw new NotImplementedException();
+                return new ErrorDataResult<OrderGetDto>("Error when added Order");
             }
+           
+            var save = _unitOfWork.SaveChanges();
+            if (save != 0)
+            {
+                //eger yeni order dugun elave olunubsa onda kohne order silinir
+                var orderIdParameter = new SqlParameter("@OrderId", id);
+                var result = await _unitOfWork.GetDbContext().Database.ExecuteSqlRawAsync("EXEC DeleteOrder @OrderId", orderIdParameter);
+                return new SuccessResult("Order succesfully update!");
+            }
+            else
+            {
+                return new ErrorResult("Order update failed");
+
+            }
+            
+            #region
+            ////Orderin icindeki yeni sifarish olunan productlarin sayini bazadan azaldiriq
+            //foreach (var orderProduct in orderUpdateDto.OrdersProducts)
+            //{
+            //    var product = await _productRepository.GetByIdAsync(orderProduct.ProductId, true);
+            //    var orderProductFromDb = await _orderProductRepository.GetByIdAsync(orderProduct.Id, true);
+            //    if (product is null)
+            //    {
+            //        return new ErrorResult("Product not found");
+            //    }
+            //    if (product.Balance < orderProduct.Quantity)
+            //    {
+            //        return new ErrorResult($"Not enough units of product {product.ProductName}.");
+            //    }
+            //    product.Balance -= orderProduct.Quantity;
+            //    orderProduct.TotalPrice = orderProduct.Quantity * product.Price;
+            //    orderUpdateDto.OrderTotalPrice += (orderProduct.Quantity * product.Price);
+            //    //Eger orderProductFromDb null-dursa demek order-e  yeni product elave olunub eks halda kohne orderproduct yenilenir
+            //    if (orderProductFromDb != null)
+            //    {
+            //        // Update the properties of the OrderProduct entity
+            //        orderProductFromDb.ProductId = orderProduct.ProductId;
+            //        orderProductFromDb.TotalPrice = orderProduct.TotalPrice;
+            //        orderProductFromDb.Quantity = orderProduct.Quantity;
+            //    }
+            //    else
+            //    {zzzzz
+            //        // If the OrderProduct entity is not found, add it as a new entity
+            //        //orderProductFromDb = _mapper.Map<OrderProduct>(orderProduct);
+
+            //        //orderUpdateDto.OrdersProducts.Add(orderProduct);
+            //        var orderProductForDb = _mapper.Map<OrderProduct>(orderProduct);
+
+            //        if (orderProductForDb != null)
+            //        {
+            //            orderProductForDb.OrderId = id;
+            //            var orderProductAdd = await _orderProductRepository.AddAsync(orderProductForDb);
+            //        }
+            //        else
+            //        {
+            //            return new ErrorResult("Error when mapping orderProdut");
+            //        }
+
+            //    }
+            //}
+            //order = _mapper.Map<Order>(orderUpdateDto);
+
+            //if (order is not null)
+            //{
+            //    var save = _unitOfWork.SaveChanges();
+            //    if (save != 0)
+            //    {
+            //        return new SuccessResult("Order succesfully update");
+            //    }
+            //    else
+            //    {
+            //        return new ErrorResult("Order update failed");
+            //    }
+            //    }
+            //return new ErrorResult("Order update failed");
+            #endregion
+        }
         public async Task<IResult> RemoveOrder(int id)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id, false);
@@ -360,3 +408,4 @@ namespace SMTstock.Services.Implementations
         }
     }
 }
+

@@ -7,6 +7,7 @@ using SMTstock.Entities.DTO.OrderDto;
 using SMTstock.Entities.DTO.ProductDto;
 using SMTstock.Entities.Models;
 using SMTstock.Entities.Utilities.Request;
+using SMTstock.Entities.Utilities.Results.Concrete;
 using SMTstock.Services.Implementations;
 using SMTstock.Services.Interfaces;
 
@@ -67,7 +68,8 @@ namespace SMTstock.Controllers
             {
                 try
                 {
-                    await _orderService.UpdateOrder(id, orderUpdateDto);
+                    var result = await _orderService.UpdateOrder(id, orderUpdateDto);
+                    return Ok(result);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

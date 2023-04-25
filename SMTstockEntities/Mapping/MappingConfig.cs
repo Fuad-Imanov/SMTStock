@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using SMTstock.Entities.DTO.CategoryDto;
 using SMTstock.Entities.DTO.OrderDto;
 using SMTstock.Entities.DTO.OrderProduct;
 using SMTstock.Entities.DTO.ProductDto;
@@ -48,9 +49,19 @@ namespace SMTstock.Entities.Mapping
             CreateMap<Order, OrderUpdateDto>();
             CreateMap<OrderUpdateDto, Order>()
             .ForMember(dest => dest.OrdersProducts, opt => opt.MapFrom(src => src.OrdersProducts));
+
+            //map OrderProductUpdateDto to OrderProduct
             CreateMap<OrderProductUpdateDto, OrderProduct>().ReverseMap();
 
+            CreateMap<OrderUpdateDto, OrderCreateDto>()
+            .ForMember(dest => dest.OrdersProducts, opt => opt.MapFrom(src => src.OrdersProducts));
 
+            //map Category to CategoryDto
+            CreateMap<CategoryDTO, Category>().ReverseMap();
+
+            //map AddCategoryDTO to Category
+            CreateMap<AddCategoryDTO, Category>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName));
         }
 
     }

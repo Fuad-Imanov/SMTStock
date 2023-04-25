@@ -127,7 +127,7 @@ namespace SMTstock.Services.Implementations
 
             if (product == null)
             {
-                return new ErrorResult("Product do not found");
+                return new ErrorResult("Product not found");
             }
             product = _mapper.Map<Product>(productDto);
             if (await _productRepository.Update(product))
@@ -137,10 +137,10 @@ namespace SMTstock.Services.Implementations
                 {
                     return new SuccessResult("Product succesfully update");
                 }
-                return new ErrorResult("Product do not update");
+                return new ErrorResult("Product not update");
             }
                 
-            return new ErrorResult("Product do not update");
+            return new ErrorResult("Product not update");
         }
         public async Task<IResult> RemoveProduct(int id)
         {
@@ -148,14 +148,14 @@ namespace SMTstock.Services.Implementations
             var product = await _productRepository.GetByIdAsync(id, false);
             if (product == null)
             {
-                return new ErrorResult("Product do not found");
+                return new ErrorResult("Product not found");
             }
             if (await _productRepository.Remove(product))
             {
                var save =  _unitOfWork.SaveChanges();
                 return new SuccessResult("Product succesfully deleted");
             }
-            return new ErrorResult("Product do not deleted");
+            return new ErrorResult("Product not deleted");
 
         }
     }
