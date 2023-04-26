@@ -15,8 +15,8 @@ namespace SMTstock.Services.Interfaces
     {
         Task<IDataResult<IEnumerable<CategoryDTO>>> GetAllCategoriesAsync();
         Task<IDataResult<CategoryDTO>> GetCategoryByIdAsync(int id);
-        Task<IDataResult<CategoryDTO>> AddCategoryAsync(AddCategoryDTO addProductDto);
-        Task<IResult> UpdateCategory(int id, CategoryDTO productDto);
+        Task<IDataResult<CategoryDTO>> AddCategoryAsync(AddCategoryDTO addProductDTO);
+        Task<IResult> UpdateCategory(int id, CategoryDTO productDTO);
         Task<IResult> RemoveCategory(int id);
     }
 }

@@ -25,6 +25,13 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
         {
             Success = success;
         }
+
+        public Result(PagedList pageList,bool success, params string[] message)
+        {
+            Success = success;
+            PageList = pageList;
+            Message = message;
+        }
         public Result(bool success, IFilterFields? filter, string? searchString, ISortField? sort, PagedList pageList, params string[] message) :this(success,message)
             
         {

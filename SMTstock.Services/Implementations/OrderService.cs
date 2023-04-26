@@ -18,7 +18,7 @@ using SMTstock.Entities.DTO;
 using SMTstock.Entities.Utilities.Request;
 using SMTstock.Entities.Utilities.Pagination;
 using SMTstock.Entities.Utilities.Sort;
-using SMTstock.Entities.DTO.OrderProduct;
+using SMTstock.Entities.DTO.OrderProductDto;
 using Microsoft.Data.SqlClient;
 
 namespace SMTstock.Services.Implementations
@@ -41,7 +41,7 @@ namespace SMTstock.Services.Implementations
             _orderProductRepository = _unitOfWork.GetRepository<OrderProduct>();
         }
 
-        public async Task<IDataResult<IEnumerable<OrderGetDto>>> GetAllOrdersAsync(RequestForGetAllOrder request)
+        public async Task<IDataResult<IEnumerable<OrderGetDTO>>> GetAllOrdersAsync(RequestForGetAllOrder request)
         {
             IQueryable<Order> orders = _orderRepository.GetAll().Include(o => o.Merchant).Include(o => o.OrdersProducts).ThenInclude(op => op.Product).ThenInclude(p => p.Category);
             //filter
@@ -93,19 +93,19 @@ namespace SMTstock.Services.Implementations
 
             //mapping
             #region Excample without Automapper
-            //var listorder = orders.Select(o => new OrderGetDto
+            //var listorder = orders.Select(o => new OrderGetDTO
             //{
             //    Id = o.Id,
             //    MerchantId = o.MerchantId,
             //    OrderDate = o.OrderDate,
             //    OrderTotalPrice = o.OrderTotalPrice,
-            //    OrdersProducts = o.OrdersProducts.Select(op => new OrderProductGetDto
+            //    OrdersProducts = o.OrdersProducts.Select(op => new OrderProductGetDTO
             //    {
             //        Id = op.Id,
             //        ProductId = op.ProductId,
             //        Quantity = op.Quantity,
             //        TotalPrice = op.TotalPrice,
-            //        ProductDto = new ProductDTO
+            //        ProductDTO = new ProductDTO
             //        {
             //            Id = op.Product.Id,
             //            ProductName = op.Product.ProductName,
@@ -117,28 +117,28 @@ namespace SMTstock.Services.Implementations
 
             //Without select and mapping
 
-            //var orderDtos = new List<OrderGetDto>();
+            //var orderDTOs = new List<OrderGetDTO>();
 
             //foreach (var order in orders)
             //{
-            //    var orderDto = new OrderGetDto
+            //    var orderDTO = new OrderGetDTO
             //    {
             //        Id = order.Id,
             //        MerchantId = order.MerchantId,
             //        OrderDate = order.OrderDate,
             //        OrderTotalPrice = order.OrderTotalPrice,
-            //        OrdersProducts = new List<OrderProductGetDto>()
+            //        OrdersProducts = new List<OrderProductGetDTO>()
             //    };
 
             //    foreach (var orderProduct in order.OrdersProducts)
             //    {
-            //        var orderProductDto = new OrderProductGetDto
+            //        var orderProductDTO = new OrderProductGetDTO
             //        {
             //            Id = orderProduct.Id,
             //            ProductId = orderProduct.ProductId,
             //            Quantity = orderProduct.Quantity,
             //            TotalPrice = orderProduct.TotalPrice,
-            //            ProductDto = new ProductDTO
+            //            ProductDTO = new ProductDTO
             //            {
             //                Id = orderProduct.Product.Id,
             //                ProductName = orderProduct.Product.ProductName,
@@ -148,81 +148,81 @@ namespace SMTstock.Services.Implementations
             //            }
             //        };
 
-            //        orderDto.OrdersProducts.Add(orderProductDto);
+            //        orderDTO.OrdersProducts.Add(orderProductDTO);
             //    }
 
-            //    orderDtos.Add(orderDto);
+            //    orderDTOs.Add(orderDTO);
             //}
             #endregion
-            List<OrderGetDto> ordersDto = new List<OrderGetDto>();
+            List<OrderGetDTO> ordersDTO = new List<OrderGetDTO>();
 
             if (result is not null && result.Count != 0)
             {
-                ordersDto = _mapper.Map<List<OrderGetDto>>(result);
+                ordersDTO = _mapper.Map<List<OrderGetDTO>>(result);
             }
 
             //Create and return Response
             var pageList = new PagedList(totalItem, request.page);
-            return (ordersDto is not null && ordersDto.Count != 0)
-                ? new SuccessDataResult<IEnumerable<OrderGetDto>>(ordersDto, request.filterOrder, request.searchString, request.sortOrder, pageList, "The product was successfully delivered.")
-                : new ErrorDataResult<IEnumerable<OrderGetDto>>(ordersDto, request.filterOrder, request.searchString, request.sortOrder, pageList, "Product not found.");
+            return (ordersDTO is not null && ordersDTO.Count != 0)
+                ? new SuccessDataResult<IEnumerable<OrderGetDTO>>(ordersDTO, request.filterOrder, request.searchString, request.sortOrder, pageList, "The product was successfully delivered.")
+                : new ErrorDataResult<IEnumerable<OrderGetDTO>>(ordersDTO, request.filterOrder, request.searchString, request.sortOrder, pageList, "Product not found.");
 
 
         }
-        public async Task<IDataResult<OrderGetDto>> GetOrderByIdAsync(int id)
+        public async Task<IDataResult<OrderGetDTO>> GetOrderByIdAsync(int id)
         {
 
             var order = await _orderRepository.GetOrderByIdAsync(id, false);
-            var orderDto = _mapper.Map<OrderGetDto>(order);
-            return (orderDto is not null)
-                 ? new SuccessDataResult<OrderGetDto>(orderDto, "Order succesfully get!")
-                : new ErrorDataResult<OrderGetDto>("Order not found");
+            var orderDTO = _mapper.Map<OrderGetDTO>(order);
+            return (orderDTO is not null)
+                 ? new SuccessDataResult<OrderGetDTO>(orderDTO, "Order succesfully get!")
+                : new ErrorDataResult<OrderGetDTO>("Order not found");
         }
-        public async Task<IDataResult<OrderGetDto>> AddOrderAsync(OrderCreateDto orderCreateDto)
+        public async Task<IDataResult<OrderGetDTO>> AddOrderAsync(OrderCreateDTO orderCreateDTO)
         {
-            var merchant = await _merchantRepository.GetByIdAsync(orderCreateDto.MerchantId, true);
+            var merchant = await _merchantRepository.GetByIdAsync(orderCreateDTO.MerchantId, true);
             if (merchant is null)
             {
-                return new ErrorDataResult<OrderGetDto>("Merchant not found");
+                return new ErrorDataResult<OrderGetDTO>("Merchant not found");
             }
             var order = new Order
             {
-                MerchantId = orderCreateDto.MerchantId,
+                MerchantId = orderCreateDTO.MerchantId,
                 //Merchant = merchant,
                 OrderTotalPrice = 0,
                 OrderDate = DateTime.Now,
                 OrdersProducts = new List<OrderProduct>()
             };
 
-            foreach (var orderProductCreateDto in orderCreateDto.OrdersProducts)
+            foreach (var orderProductCreateDTO in orderCreateDTO.OrdersProducts)
             {
                 //create new orderproduct
                 var orderProduct = new OrderProduct
                 {
-                    ProductId = orderProductCreateDto.ProductId,
-                    Quantity = orderProductCreateDto.Quantity
+                    ProductId = orderProductCreateDTO.ProductId,
+                    Quantity = orderProductCreateDTO.Quantity
 
                 };
                 //get product from db and check Balance
-                var product = await _productRepository.GetByIdAsync(orderProductCreateDto.ProductId, true);
+                var product = await _productRepository.GetByIdAsync(orderProductCreateDTO.ProductId, true);
                 if (product == null)
                 {
-                    return new ErrorDataResult<OrderGetDto>("Product not found");
+                    return new ErrorDataResult<OrderGetDTO>("Product not found");
                 }
-                if (product.Balance < orderProductCreateDto.Quantity)
+                if (product.Balance < orderProductCreateDTO.Quantity)
                 {
-                    return new ErrorDataResult<OrderGetDto>($"Not enough units of product {product.ProductName}.");
+                    return new ErrorDataResult<OrderGetDTO>($"Not enough units of product {product.ProductName}.");
                 }
-                product.Balance -= orderProductCreateDto.Quantity;
+                product.Balance -= orderProductCreateDTO.Quantity;
 
                 //add info to orderproduct 
                 //orderProduct.Product = product;
-                orderProduct.TotalPrice = orderProductCreateDto.Quantity * product.Price;
-                order.OrderTotalPrice = order.OrderTotalPrice + (orderProductCreateDto.Quantity * product.Price);
+                orderProduct.TotalPrice = orderProductCreateDTO.Quantity * product.Price;
+                order.OrderTotalPrice = order.OrderTotalPrice + (orderProductCreateDTO.Quantity * product.Price);
                 var orderProductAdd = await _orderProductRepository.AddAsync(orderProduct);
                 if (!orderProductAdd)
                 {
-                    return new ErrorDataResult<OrderGetDto>("Error when added OrderProduct");
+                    return new ErrorDataResult<OrderGetDTO>("Error when added OrderProduct");
                 }
                 order.OrdersProducts.Add(orderProduct);
 
@@ -231,22 +231,22 @@ namespace SMTstock.Services.Implementations
             var orderAdd = await _orderRepository.AddAsync(order);
             if (!orderAdd)
             {
-                return new ErrorDataResult<OrderGetDto>("Error when added Order");
+                return new ErrorDataResult<OrderGetDTO>("Error when added Order");
             }
             var save = _unitOfWork.SaveChanges();
             if (save != 0)
             {
-                var orderDto = _mapper.Map<OrderGetDto>(order);
-                return new SuccessDataResult<OrderGetDto>(orderDto, "Order succesfully created!");
+                var orderDTO = _mapper.Map<OrderGetDTO>(order);
+                return new SuccessDataResult<OrderGetDTO>(orderDTO, "Order succesfully created!");
             }
             else
             {
-                return new ErrorDataResult<OrderGetDto>("Order not created - Error when SaveChanges");
+                return new ErrorDataResult<OrderGetDTO>("Order not created - Error when SaveChanges");
 
             }
 
         }
-        public async Task<IResult> UpdateOrder(int id, OrderUpdateDto orderUpdateDto)
+        public async Task<IResult> UpdateOrder(int id, OrderUpdateDTO orderUpdateDTO)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id, false);
 
@@ -254,7 +254,7 @@ namespace SMTstock.Services.Implementations
             {
                 return new ErrorResult("Order not found");
             }
-            var merchant = await _merchantRepository.GetByIdAsync(orderUpdateDto.MerchantId, false);
+            var merchant = await _merchantRepository.GetByIdAsync(orderUpdateDTO.MerchantId, false);
             if (merchant is null)
             {
                 return new ErrorResult("Merchant not found");
@@ -272,41 +272,41 @@ namespace SMTstock.Services.Implementations
             //yeni order yaradiriq
             var orderForDb = new Order
             {
-                MerchantId = orderUpdateDto.MerchantId,
+                MerchantId = orderUpdateDTO.MerchantId,
                 OrderTotalPrice = 0,
                 OrderDate = DateTime.Now,
                 OrdersProducts = new List<OrderProduct>()
             };
 
-            foreach (var orderProductCreateDto in orderUpdateDto.OrdersProducts)
+            foreach (var orderProductCreateDTO in orderUpdateDTO.OrdersProducts)
             {
                 //create new orderproduct
                 var orderProduct = new OrderProduct
                 {
-                    ProductId = orderProductCreateDto.ProductId,
-                    Quantity = orderProductCreateDto.Quantity
+                    ProductId = orderProductCreateDTO.ProductId,
+                    Quantity = orderProductCreateDTO.Quantity
 
                 };
                 //get product from db and check Balance
-                var product = await _productRepository.GetByIdAsync(orderProductCreateDto.ProductId, true);
+                var product = await _productRepository.GetByIdAsync(orderProductCreateDTO.ProductId, true);
                 if (product == null)
                 {
-                    return new ErrorDataResult<OrderGetDto>("Product not found");
+                    return new ErrorDataResult<OrderGetDTO>("Product not found");
                 }
-                if (product.Balance < orderProductCreateDto.Quantity)
+                if (product.Balance < orderProductCreateDTO.Quantity)
                 {
-                    return new ErrorDataResult<OrderGetDto>($"Not enough units of product {product.ProductName}.");
+                    return new ErrorDataResult<OrderGetDTO>($"Not enough units of product {product.ProductName}.");
                 }
-                product.Balance -= orderProductCreateDto.Quantity;
+                product.Balance -= orderProductCreateDTO.Quantity;
 
                 //add info to orderproduct 
                 //orderProduct.Product = product;
-                orderProduct.TotalPrice = orderProductCreateDto.Quantity * product.Price;
-                orderForDb.OrderTotalPrice = orderForDb.OrderTotalPrice + (orderProductCreateDto.Quantity * product.Price);
+                orderProduct.TotalPrice = orderProductCreateDTO.Quantity * product.Price;
+                orderForDb.OrderTotalPrice = orderForDb.OrderTotalPrice + (orderProductCreateDTO.Quantity * product.Price);
                 var orderProductAdd = await _orderProductRepository.AddAsync(orderProduct);
                 if (!orderProductAdd)
                 {
-                    return new ErrorDataResult<OrderGetDto>("Error when added OrderProduct");
+                    return new ErrorDataResult<OrderGetDTO>("Error when added OrderProduct");
                 }
                 orderForDb.OrdersProducts.Add(orderProduct);
 
@@ -314,7 +314,7 @@ namespace SMTstock.Services.Implementations
             var orderAdd = await _orderRepository.AddAsync(orderForDb);
             if (!orderAdd)
             {
-                return new ErrorDataResult<OrderGetDto>("Error when added Order");
+                return new ErrorDataResult<OrderGetDTO>("Error when added Order");
             }
            
             var save = _unitOfWork.SaveChanges();
@@ -333,7 +333,7 @@ namespace SMTstock.Services.Implementations
             
             #region
             ////Orderin icindeki yeni sifarish olunan productlarin sayini bazadan azaldiriq
-            //foreach (var orderProduct in orderUpdateDto.OrdersProducts)
+            //foreach (var orderProduct in orderUpdateDTO.OrdersProducts)
             //{
             //    var product = await _productRepository.GetByIdAsync(orderProduct.ProductId, true);
             //    var orderProductFromDb = await _orderProductRepository.GetByIdAsync(orderProduct.Id, true);
@@ -347,7 +347,7 @@ namespace SMTstock.Services.Implementations
             //    }
             //    product.Balance -= orderProduct.Quantity;
             //    orderProduct.TotalPrice = orderProduct.Quantity * product.Price;
-            //    orderUpdateDto.OrderTotalPrice += (orderProduct.Quantity * product.Price);
+            //    orderUpdateDTO.OrderTotalPrice += (orderProduct.Quantity * product.Price);
             //    //Eger orderProductFromDb null-dursa demek order-e  yeni product elave olunub eks halda kohne orderproduct yenilenir
             //    if (orderProductFromDb != null)
             //    {
@@ -361,7 +361,7 @@ namespace SMTstock.Services.Implementations
             //        // If the OrderProduct entity is not found, add it as a new entity
             //        //orderProductFromDb = _mapper.Map<OrderProduct>(orderProduct);
 
-            //        //orderUpdateDto.OrdersProducts.Add(orderProduct);
+            //        //orderUpdateDTO.OrdersProducts.Add(orderProduct);
             //        var orderProductForDb = _mapper.Map<OrderProduct>(orderProduct);
 
             //        if (orderProductForDb != null)
@@ -376,7 +376,7 @@ namespace SMTstock.Services.Implementations
 
             //    }
             //}
-            //order = _mapper.Map<Order>(orderUpdateDto);
+            //order = _mapper.Map<Order>(orderUpdateDTO);
 
             //if (order is not null)
             //{
@@ -398,13 +398,13 @@ namespace SMTstock.Services.Implementations
             var order = await _orderRepository.GetOrderByIdAsync(id, false);
             if (order == null)
             {
-                return new ErrorResult("Order  not found");
+                return new ErrorResult("Order not found");
             }
             var orderIdParameter = new SqlParameter("@OrderId", id);
             var result = await _unitOfWork.GetDbContext().Database.ExecuteSqlRawAsync("EXEC DeleteOrder @OrderId", orderIdParameter);
             //var save = _unitOfWork.SaveChanges();
 
-            return new SuccessResult("Order  succesfully removed");
+            return new SuccessResult("Order succesfully removed");
         }
     }
 }

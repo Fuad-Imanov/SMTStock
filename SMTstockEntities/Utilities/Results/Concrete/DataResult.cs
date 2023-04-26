@@ -17,6 +17,10 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
         {
             Data = data;
         }
+        public DataResult(T data,PagedList pageList,bool success, params string[] message) :base(pageList,success,message)
+        {
+            Data = data;
+        }
 
         public DataResult
             (

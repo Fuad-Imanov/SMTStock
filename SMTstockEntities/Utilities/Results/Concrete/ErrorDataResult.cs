@@ -20,6 +20,10 @@ namespace SMTstock.Entities.Utilities.Results.Concrete
         public ErrorDataResult(T data) : base(data, false)
         {
         }
+        public ErrorDataResult(T data, PagedList pageList, params string[] message):base(data,pageList,false,message)
+        {
+
+        }
 
         public ErrorDataResult(params string[] message) : base(default, false,message)
         {

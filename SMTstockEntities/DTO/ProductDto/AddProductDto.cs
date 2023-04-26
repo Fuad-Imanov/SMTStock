@@ -2,7 +2,7 @@
 
 namespace SMTstock.Entities.DTO.ProductDto
 {
-    public class AddProductDto
+    public class AddProductDTO
     {
         [Required]
         public string ProductName { get; set; }

@@ -13,7 +13,7 @@ namespace SMTstock.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230411121903_ordertotalprice field to orderprocut model")]
-    partial class ordertotalpricefieldtoorderprocutmodel
+    partial class ordertotalpricefielDTOorderprocutmodel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

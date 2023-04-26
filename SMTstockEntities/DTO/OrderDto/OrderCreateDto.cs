@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SMTstock.Entities.DTO.OrderProduct;
+﻿
+
+using SMTstock.Entities.DTO.OrderProductDto;
 
 namespace SMTstock.Entities.DTO.OrderDto
 {
-    public class OrderCreateDto
+    public class OrderCreateDTO
     {
         public int MerchantId { get; set; }
-        public ICollection<OrderProductCreateDto> OrdersProducts { get; set; }
+        public ICollection<OrderProductCreateDTO> OrdersProducts { get; set; }
     }
 }

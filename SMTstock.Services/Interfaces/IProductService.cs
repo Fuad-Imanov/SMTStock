@@ -10,8 +10,8 @@ namespace SMTstock.Services.Interfaces
 
         Task<IDataResult<IEnumerable<ProductDTO>>> GetAllProductsAsync(RequestForGetAllProduct request);
         Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id);
-        Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDto addProductDto);
-        Task<IResult> UpdateProduct(int id, ProductDTO productDto);
+        Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDTO addProductDTO);
+        Task<IResult> UpdateProduct(int id, ProductDTO productDTO);
         Task<IResult> RemoveProduct(int id);
 
     }

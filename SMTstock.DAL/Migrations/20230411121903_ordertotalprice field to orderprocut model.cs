@@ -4,7 +4,7 @@
 
 namespace SMTstock.DAL.Migrations
 {
-    public partial class ordertotalpricefieldtoorderprocutmodel : Migration
+    public partial class ordertotalpricefielDTOorderprocutmodel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -76,33 +76,33 @@ namespace SMTstock.Services.Implementations
             var result = await products.Skip((pl.CurrentPage - 1) * pl.PageSize).Take(pl.PageSize).ToListAsync();
 
             //mapping
-            List<ProductDTO> productsDto = new List<ProductDTO>();
+            List<ProductDTO> productsDTO = new List<ProductDTO>();
 
             if (result is not null && result.Count != 0)
             {
-                productsDto = _mapper.Map<List<ProductDTO>>(result);
+                productsDTO = _mapper.Map<List<ProductDTO>>(result);
             }
 
             //Create and return Response
             var pageList = new PagedList(totalItem, request.page);
-            return (productsDto is not null && productsDto.Count != 0)
-                ? new SuccessDataResult<IEnumerable<ProductDTO>>(productsDto, request.filterProduct, request.searchString, request.sortProduct, pageList, "The product was successfully delivered.")
-                : new ErrorDataResult<IEnumerable<ProductDTO>>(productsDto, request.filterProduct, request.searchString, request.sortProduct, pageList, "Product not found.");
+            return (productsDTO is not null && productsDTO.Count != 0)
+                ? new SuccessDataResult<IEnumerable<ProductDTO>>(productsDTO, request.filterProduct, request.searchString, request.sortProduct, pageList, "The product was successfully delivered.")
+                : new ErrorDataResult<IEnumerable<ProductDTO>>(productsDTO, request.filterProduct, request.searchString, request.sortProduct, pageList, "Product not found.");
         }
 
         public async Task<IDataResult<ProductDTO>> GetProductByIdAsync(int id)
         {
             //var productRepository = _unitOfWork.GetRepository<Product>();
             var product = await _productRepository.GetByIdAsync(id, false);
-            var productDto = _mapper.Map<ProductDTO>(product);
-            return (productDto is not null)
-                 ? new SuccessDataResult<ProductDTO>(productDto, "Product succesfully get!")
+            var productDTO = _mapper.Map<ProductDTO>(product);
+            return (productDTO is not null)
+                 ? new SuccessDataResult<ProductDTO>(productDTO, "Product succesfully get!")
                 : new ErrorDataResult<ProductDTO>("Product not created");
         }     
 
-        public async Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDto addProductDto)
+        public async Task<IDataResult<ProductDTO>> AddProductAsync(AddProductDTO addProductDTO)
         {
-            var product = _mapper.Map<Product>(addProductDto);
+            var product = _mapper.Map<Product>(addProductDTO);
             var productAdd = await _productRepository.AddAsync(product);
             if (!productAdd)
             {
@@ -111,8 +111,8 @@ namespace SMTstock.Services.Implementations
             var save = _unitOfWork.SaveChanges();
             if (save!=0)
             {
-                var createdProductDto = _mapper.Map<ProductDTO>(product);
-                return new SuccessDataResult<ProductDTO>(createdProductDto, "Product succesfully created!");
+                var createdProductDTO = _mapper.Map<ProductDTO>(product);
+                return new SuccessDataResult<ProductDTO>(createdProductDTO, "Product succesfully created!");
             }
             else
             {
@@ -121,7 +121,7 @@ namespace SMTstock.Services.Implementations
         }
             
 
-        public async Task<IResult> UpdateProduct(int id, ProductDTO productDto)
+        public async Task<IResult> UpdateProduct(int id, ProductDTO productDTO)
         {
             var product = await _productRepository.GetByIdAsync(id, false);
 
@@ -129,7 +129,7 @@ namespace SMTstock.Services.Implementations
             {
                 return new ErrorResult("Product not found");
             }
-            product = _mapper.Map<Product>(productDto);
+            product = _mapper.Map<Product>(productDTO);
             if (await _productRepository.Update(product))
             {
                 var save = _unitOfWork.SaveChanges();

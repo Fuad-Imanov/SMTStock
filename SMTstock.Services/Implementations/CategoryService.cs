@@ -28,17 +28,17 @@ namespace SMTstock.Services.Implementations
         {
             List<Category> categories = _categoryRepository.GetAll().ToList();
             //mapping
-            List<CategoryDTO> categoriesDto = new List<CategoryDTO>();
+            List<CategoryDTO> categoriesDTO = new List<CategoryDTO>();
 
             if (categories is not null && categories.Count != 0)
             {
-                categoriesDto = _mapper.Map<List<CategoryDTO>>(categories);
+                categoriesDTO = _mapper.Map<List<CategoryDTO>>(categories);
             }
 
             //Create and return Response
-            return (categoriesDto is not null && categoriesDto.Count != 0)
-                ? new SuccessDataResult<IEnumerable<CategoryDTO>>(categoriesDto, "Categories was successfully delivered.")
-                : new ErrorDataResult<IEnumerable<CategoryDTO>>(categoriesDto, "Category not found.");
+            return (categoriesDTO is not null && categoriesDTO.Count != 0)
+                ? new SuccessDataResult<IEnumerable<CategoryDTO>>(categoriesDTO, "Categories was successfully delivered.")
+                : new ErrorDataResult<IEnumerable<CategoryDTO>>(categoriesDTO, "Category not found.");
         }
 
         public async Task<IDataResult<CategoryDTO>> GetCategoryByIdAsync(int id)
@@ -99,18 +99,18 @@ namespace SMTstock.Services.Implementations
             var category = await _categoryRepository.GetByIdAsync(id, false);
             if (category == null)
             {
-                return new ErrorResult("Category  not found");
+                return new ErrorResult("Category not found");
             }
             if (await _categoryRepository.Remove(category))
             {
                 var save = _unitOfWork.SaveChanges();
                 if (save != 0)
                 {
-                    return new SuccessResult("Product succesfully deleted");
+                    return new SuccessResult("Category succesfully deleted");
                 }
-                return new ErrorResult("Product do not deleted");
+                return new ErrorResult("Category not deleted");
             }
-            return new ErrorResult("Product do not deleted");
+            return new ErrorResult("Category not deleted");
 
         }
     }

@@ -57,7 +57,7 @@ namespace SMTstock.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> AddProductAsync(AddProductDto addProductDTO)
+        public async Task<IActionResult> AddProductAsync(AddProductDTO addProductDTO)
         {
 
 

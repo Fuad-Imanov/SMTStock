@@ -19,12 +19,10 @@ namespace SMTstock.Controllers
     public class OrderAPIController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly IUnitOfWork<ApplicationDbContext> _unitOfWork;
 
-        public OrderAPIController(IOrderService orderService, IUnitOfWork<ApplicationDbContext> unitOfWork)
+        public OrderAPIController(IOrderService orderService)
         {
             _orderService = orderService;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("GetOrders")]
@@ -46,11 +44,11 @@ namespace SMTstock.Controllers
             return Ok(order);
         }
         [HttpPost("AddOrder")]
-        public async Task<IActionResult> AddOrderAsync(OrderCreateDto orderDto)
+        public async Task<IActionResult> AddOrderAsync(OrderCreateDTO orderDTO)
         {
             if (ModelState.IsValid)
             {
-                var result = await _orderService.AddOrderAsync(orderDto);
+                var result = await _orderService.AddOrderAsync(orderDTO);
                 return Ok(result);
             }
 
@@ -58,9 +56,9 @@ namespace SMTstock.Controllers
         }
 
         [HttpPut("UpdateOrder/{id:int}")]
-        public async Task<IActionResult> UpdateOrderAsync(int id, [FromBody]OrderUpdateDto orderUpdateDto)
+        public async Task<IActionResult> UpdateOrderAsync(int id, [FromBody]OrderUpdateDTO orderUpdateDTO)
         {
-            if (orderUpdateDto == null || id != orderUpdateDto.Id)
+            if (orderUpdateDTO == null || id != orderUpdateDTO.Id)
             {
                 return BadRequest();
             }
@@ -68,7 +66,7 @@ namespace SMTstock.Controllers
             {
                 try
                 {
-                    var result = await _orderService.UpdateOrder(id, orderUpdateDto);
+                    var result = await _orderService.UpdateOrder(id, orderUpdateDTO);
                     return Ok(result);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -78,10 +76,10 @@ namespace SMTstock.Controllers
                         return NotFound();
                     }
 
-                    throw;
+                    return NoContent();
                 }
 
-                return NoContent();
+               
             }
 
             return BadRequest(ModelState);
